@@ -1,0 +1,28 @@
+*,
+*:before,
+*:after{
+    box-sizing: border-box;
+}
+main{
+    max-width: 1440px;
+    margin: 0 auto;
+}
+#game-field{
+    display: grid;
+    grid-template: repeat(4, 1fr) / repeat(3, 1fr);
+    grid-gap: 10px;
+}
+.game-card{
+    border: 1px solid black;
+    height: 50px;
+    position: relative;
+}
+.front, back{
+    position: absolute;
+}
+.back{
+    display: none;
+}
+.game-card.active .back{
+    display: block;
+}
