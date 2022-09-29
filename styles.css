@@ -70,6 +70,7 @@ main{
 }
 .win-mess--text{
     font-size: 24px;
+    text-align: center;
 }
 .restart-button{
     appearance: none;
