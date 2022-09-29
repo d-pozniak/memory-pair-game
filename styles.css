@@ -7,6 +7,7 @@
 main{
     max-width: 1280px;
     margin: 50px auto;
+    position: relative;
 }
 #game-field{
     display: flex;
@@ -55,6 +56,29 @@ main{
 }
 .card-img{
     width: 85%;
+}
+.win-message{
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    width: fit-content;
+    margin: auto;
+    position: absolute;
+    top: 45%;
+    left: calc(50% - 200px);
+    font-family: monospace;
+}
+.win-mess--text{
+    font-size: 24px;
+}
+.restart-button{
+    appearance: none;
+    font-family: monospace;
+    margin: 10px;
+    font-size: 20px;
+}
+.show-win{
+    display: flex;
 }
 @media (max-width: 900px){
     .game-card{

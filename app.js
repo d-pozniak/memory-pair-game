@@ -8,7 +8,8 @@ const CARD_ARRAY = UNIQUE_CARDS.concat(UNIQUE_CARDS);
 
 const gameField = document.getElementById('game-field');
 let firstSelectedElem, secondSelectedElem;
-let totalSelectedAmount = 0;
+let totalSelectedAmount = 0,
+    totalAmount = CARD_ARRAY.length;
 
 function shuffleCards(cardArr){
     return cardArr.slice(0)
@@ -32,44 +33,67 @@ function createTempCardEl(card){
     tempCard.append(createTempEl('div','front'), createTempWrappedImg('back','card-img',card));
     return tempCard;
 }
-function flipCard(e){
-    if (e.target.id !== gameField.id && !e.target.parentElement.parentElement.classList.contains('active')){
+function checkSimilarity(elem1, elem2){
+    return elem1.parentElement.querySelector('.card-img').getAttribute('src')
+                 === elem2.parentElement.querySelector('.card-img').getAttribute('src');
+}
+function handleClicks(e){
+    if (e.target.id !== gameField.id &&
+        !e.target.parentElement.parentElement.classList.contains('active') &&
+        !e.target.parentElement.classList.contains('active')
+    ){
         totalSelectedAmount++;
         if (totalSelectedAmount === 1){
-            e.target.parentElement.classList.add('active');
             firstSelectedElem = e.target;
+            changeCardTo('active', firstSelectedElem);
         } else if (totalSelectedAmount === 2){
-            e.target.parentElement.classList.add('active');
             secondSelectedElem = e.target;
+            changeCardTo('active', secondSelectedElem)
             if (checkSimilarity(firstSelectedElem, secondSelectedElem)){
                 setTimeout(()=>{
-                    firstSelectedElem.parentElement.classList.add('matched');
-                    secondSelectedElem.parentElement.classList.add('matched');
+                    changeCardTo('matched', firstSelectedElem, secondSelectedElem);
+                    totalAmount -= 2;
+                    monitorGameEnd();
                 }, 1000)
             }
             setTimeout(()=>{
-                    totalSelectedAmount=0;
-                    firstSelectedElem.parentElement.classList.remove('active');
-                    secondSelectedElem.parentElement.classList.remove('active');
-                    firstSelectedElem = undefined;
-                    secondSelectedElem = undefined;
-                }, 1000)
+                totalSelectedAmount=0;
+                revertCards(firstSelectedElem, secondSelectedElem);
+            }, 1000)
         }
     }
 }
-function checkSimilarity(elem1, elem2){
-    return elem1.parentElement.querySelector('.card-img').getAttribute('src') === elem2.parentElement.querySelector('.card-img').getAttribute('src');
+function changeCardTo(className){
+    [className, ...args] = [...arguments];
+    args.forEach(e => e.parentElement.classList.add(className));
 }
-function openCards(area){
-    area.addEventListener('click', (e) => flipCard(e));
+function revertCards(){
+    [...arguments].forEach(e => {
+        e.parentElement.classList.remove('active');
+        e = undefined;
+    })
 }
-function handleClicks(area){
-    openCards(area);
+function startGame(area){
+    area.addEventListener('click', (e) => handleClicks(e));
+}
+function monitorGameEnd(){
+    if (totalAmount === 0){
+        const winMessage = document.querySelector('.win-message');
+        winMessage.classList.add('show-win');
+        winMessage.querySelector('.restart-button').addEventListener('click',() => {
+            restartGame(gameField, CARD_ARRAY);
+            winMessage.classList.remove('show-win');
+        })
+    }
+}
+function restartGame(field, cards){
+    field.replaceChildren();
+    setGame(field, cards);
 }
 function setGame(field, cards){
     const cardSet = shuffleCards(cards);
     const tempElems = cardSet.map((card) => createTempCardEl(card));
     tempElems.forEach(elem => field.appendChild(elem));
-    handleClicks(field);
+    startGame(field);
 }
 setGame(gameField, CARD_ARRAY);
