@@ -54,8 +54,6 @@ function flipCard(e){
                     firstSelectedElem = undefined;
                     secondSelectedElem = undefined;
                 }, 1000)
-        } else if (totalSelectedAmount > 2){
-
         }
     }
 }
